@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/layout/activity_chat.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/layout/activity_first.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/layout/activity_item.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/layout/activity_list.xml" value="0.33" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/layout/activity_list_item.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/layout/activity_select_convi_map.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.269" />
+        <entry key="..\:/Users/Ho/Desktop/AndroidStudy/capstone/MiniProject/app/src/main/res/mipmap-anydpi-v26/ic_launcher_sbn.xml" value="0.269" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

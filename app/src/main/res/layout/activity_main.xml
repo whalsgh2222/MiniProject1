@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutTmap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/recordButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="기록 시작" />
+
+        <Button
+            android:id="@+id/drawTrailButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="터치로 경로 그리기" />
+
+        <Button
+            android:id="@+id/listButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="경로 리스트" />
+
+        <Button
+            android:id="@+id/clearButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="그려진 경로 지우기" />
+
+    </LinearLayout>
+
+</android.widget.LinearLayout>
