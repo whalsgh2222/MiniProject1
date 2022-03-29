@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
 
 
                     try {
-                        dbHelper.insert("신규 산책로", newTrail.coorList, newTrail.totalDistance, address1, address2);
+                        if(newTrail.totalDistance != 0) dbHelper.insert("신규 산책로", newTrail.coorList, newTrail.totalDistString, address1, address2);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
 
 
                     try {
-                        dbHelper.insert("신규 산책로", newTrail.coorList, newTrail.totalDistance, address1, address2);
+                        if(newTrail.totalDistance != 0) dbHelper.insert("신규 산책로", newTrail.coorList, newTrail.totalDistString, address1, address2);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

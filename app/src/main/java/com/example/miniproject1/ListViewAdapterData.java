@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ListViewAdapterData {
-    private Double totalDistance;
+    private String totalDistance;
     private String name;
     private String startAddr;
     private String endAddr;
@@ -20,7 +20,7 @@ public class ListViewAdapterData {
         return name;
     }
 
-    public Double getTotalDistance() {
+    public String getTotalDistance() {
         return totalDistance;
     }
 
@@ -36,7 +36,7 @@ public class ListViewAdapterData {
         return startAddr;
     }
 
-    public void setTotalDistance(Double totalDistance) {
+    public void setTotalDistance(String totalDistance) {
         this.totalDistance = totalDistance;
     }
 

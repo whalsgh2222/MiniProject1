@@ -25,7 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
     // Trails Table 생성
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Trails(name TEXT, coordinateList TEXT, totalDist REAL, startAddr TEXT, endAddr TEXT)");
+        db.execSQL("CREATE TABLE Trails(name TEXT, jsonList TEXT, totalDist TEXT, startAddr TEXT, endAddr TEXT)");
     }
 
     // Trails Table Upgrade
@@ -36,9 +36,10 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // Trails Table 데이터 입력
-    public void insert(String name, ArrayList<TMapPoint> coordinateList, Double totalDist, String startAddr, String endAddr) throws JSONException {
+    public void insert(String name, ArrayList<TMapPoint> coordinateList, String totalDist, String startAddr, String endAddr) throws JSONException {
         SQLiteDatabase db = getWritableDatabase();
         String json = arrayListToJson(coordinateList);
+        Log.d("확인", "*** totalDist : " + totalDist);
         db.execSQL("INSERT INTO Trails VALUES('" + name + "', '" + json + "', " + totalDist + ", '" + startAddr + "', '" + endAddr + "')");
         db.close();
     }
@@ -51,9 +52,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }*/
 
     // Trails Table 데이터 삭제
-    public void Delete(String name) {
+    public void Delete(String json) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE Trails WHERE NAME = '" + name + "'");
+        db.execSQL("DELETE Trails WHERE jsonList = '" + json + "'");
         db.close();
     }
 

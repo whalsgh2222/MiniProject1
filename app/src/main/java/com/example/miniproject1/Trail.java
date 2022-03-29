@@ -14,9 +14,8 @@ public class Trail {
     TMapData tmapdata = new TMapData();
     public String name = "새 경로";
     public ArrayList<TMapPoint> coorList = new ArrayList<TMapPoint>();
-
-
     public Double totalDistance = 0.0;
+    public String totalDistString = "";
 
     public void setName(String name) {
         this.name = name;
@@ -31,6 +30,7 @@ public class Trail {
         for(int i = 0 ; i < coorList.size()-1 ; i++ ){
             totalDistance += distance(coorList.get(i).getLatitude(),coorList.get(i).getLongitude(),coorList.get(i+1).getLatitude(),coorList.get(i+1).getLongitude(),"kilometer");
         }
+        totalDistString = String.format("%.3f",totalDistance);
     }
     private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
         Double distTrim;

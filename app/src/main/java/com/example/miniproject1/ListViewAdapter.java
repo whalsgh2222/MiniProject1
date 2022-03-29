@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -49,12 +50,14 @@ public class ListViewAdapter extends BaseAdapter {
 
         //가져온 객체안에 있는 글자들을 각 뷰에 적용한다
         trailName.setText(listdata.getName()); //원래 int형이라 String으로 형 변환
-        trailInfo.setText("총 길이 : "+listdata.getTotalDistance().toString().substring(0,5) +"km\n시작 주소 : " + listdata.getStartAddr() + "\n끝 주소 : " + listdata.getEndAddr() + "\nJson : " + listdata.getJsonList());
+        trailInfo.setText("총 길이 : "+listdata.getTotalDistance() +"km\n시작 주소 : " + listdata.getStartAddr() + "\n끝 주소 : " + listdata.getEndAddr() + "\nJson : " + listdata.getJsonList());
+
+
 
         return view;
     }
     // 0 : 이름 , 1 : 제이슨리스트 , 2 : 총 길이 , 3 : 주소 , 4 : 주소
-    public void addItemToList(String name, String jsonList, Double totalDistance, String startAddr, String endAddr) {
+    public void addItemToList(String name, String jsonList, String totalDistance, String startAddr, String endAddr) {
         ListViewAdapterData listdata = new ListViewAdapterData();
 
         listdata.setName(name);
@@ -67,4 +70,8 @@ public class ListViewAdapter extends BaseAdapter {
         list.add(listdata);
 
     }
+    public void removeItemInList(int num) {
+        list.remove(num);
+    }
+
 }
