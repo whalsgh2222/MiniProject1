@@ -12,9 +12,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.location.Address;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -22,6 +24,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.skt.Tmap.TMapCircle;
+import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapGpsManager;
 import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
@@ -29,11 +32,17 @@ import com.skt.Tmap.TMapPolyLine;
 import com.skt.Tmap.TMapView;
 import com.skt.Tmap.poi_item.TMapPOIItem;
 
+import org.json.JSONException;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TMapGpsManager.onLocationChangedCallback, TMapView.OnClickListenerCallback {
+import javax.xml.parsers.ParserConfigurationException;
 
+public class MainActivity extends AppCompatActivity implements TMapGpsManager.onLocationChangedCallback, TMapView.OnClickListenerCallback {
+    ListViewAdapter adapter;
     String API_Key = "l7xxaf0e68fd185f445596200b488c1177af";
 
     // T Map View
@@ -45,17 +54,28 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
     // 신규 경로
     Trail newTrail = null;
 
+    DBHelper dbHelper;
+
     boolean isRecording = false;
     boolean isDrawing = false;
+
+    private String address1 = "aa";
+    private String address2 = "bb";
 
     //기록용 좌표 리스트
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        adapter = new ListViewAdapter();
+        ListView trailListView = findViewById(R.id.trailListView);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dbHelper = new DBHelper(MainActivity.this, 1);
+
+        TMapData tmapdata = new TMapData();
 
         // T Map View
         tMapView = new TMapView(this);
@@ -103,6 +123,16 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
                     recBtn.setText("기록 종료");
                     newTrail = new Trail();
                     newTrail.coorList.add(tMapGPS.getLocation());
+                    TMapPoint point1 = newTrail.coorList.get(0);
+                    Log.d("TmapTest", "" + point1.getLatitude());
+                    Log.d("TmapTest", "" + point1.getLongitude());
+                    tmapdata.convertGpsToAddress(point1.getLatitude(), point1.getLongitude(), new TMapData.ConvertGPSToAddressListenerCallback() {
+                        @Override
+                        public void onConvertToGPSToAddress(String addr) {
+                            address1 = addr;
+                            Log.d("TmapTest", "*** updatePositionInfo - addr: " + addr);
+                        }
+                    });
                 }
                 //기록 중에 기록을 종료하기
                 else if (isRecording) {
@@ -111,12 +141,42 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
                     recBtn.setText("기록 시작");
                     newTrail.coorList.add(tMapGPS.getLocation());
                     drawTrail(newTrail);
+                    //dbHelper.insert("새산책로", newTrail.coorList,);
+                    newTrail.calTotalDistance();
+                    try {
+                        TMapPoint point2 = newTrail.coorList.get(newTrail.coorList.size() - 1);
+                        Log.d("TmapTest", "" + point2.getLatitude());
+                        Log.d("TmapTest", "" + point2.getLongitude());
+
+                        tmapdata.convertGpsToAddress(point2.getLatitude(), point2.getLongitude(), new TMapData.ConvertGPSToAddressListenerCallback() {
+                            @Override
+                            public void onConvertToGPSToAddress(String addr) {
+                                address2 = addr;
+                                Log.d("TmapTest", "*** updatePositionInfo - addr: " + addr);
+                            }
+                        });
+                        //address = tmapdata.convertGpsToAddress(point.getLatitude(), point.getLongitude());
+
+                    } catch (Exception e) {
+                        Log.d("error", "*** Exception: " + e.getLocalizedMessage());
+                        e.printStackTrace();
+                    }
+
+                    //Toast.makeText(getApplicationContext(), "총 거리 : " + newTrail.totalDistance + "km", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "시작주소 : " + address1 , Toast.LENGTH_SHORT).show();
+
+
+                    try {
+                        dbHelper.insert("신규 산책로", newTrail.coorList, newTrail.totalDistance, address1, address2);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     newTrail = null;
                 } else {
                     Toast.makeText(getApplicationContext(), "문제", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
             }
         });
 
@@ -134,6 +194,16 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
                     newTrail = new Trail();
                     drawBtn.setText("그리기 종료");
                     newTrail.coorList.add(tMapGPS.getLocation());
+                    TMapPoint point1 = newTrail.coorList.get(0);
+                    Log.d("TmapTest", "" + point1.getLatitude());
+                    Log.d("TmapTest", "" + point1.getLongitude());
+                    tmapdata.convertGpsToAddress(point1.getLatitude(), point1.getLongitude(), new TMapData.ConvertGPSToAddressListenerCallback() {
+                        @Override
+                        public void onConvertToGPSToAddress(String addr) {
+                            address1 = addr;
+                            Log.d("TmapTest", "*** updatePositionInfo - addr: " + addr);
+                        }
+                    });
                 }
                 //그리기 종료
                 else if (isDrawing) {
@@ -141,9 +211,43 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
                     isDrawing = false;
                     drawBtn.setText("터치로 경로 그리기");
                     drawTrail(newTrail);
+                    newTrail.calTotalDistance();
+
+                    //dbHelper.onUpgrade(dbHelper.getWritableDatabase(),1,1);
+                    try {
+                        TMapPoint point2 = newTrail.coorList.get(newTrail.coorList.size() - 1);
+                        Log.d("TmapTest", "" + point2.getLatitude());
+                        Log.d("TmapTest", "" + point2.getLongitude());
+
+                        tmapdata.convertGpsToAddress(point2.getLatitude(), point2.getLongitude(), new TMapData.ConvertGPSToAddressListenerCallback() {
+                            @Override
+                            public void onConvertToGPSToAddress(String addr) {
+                                address2 = addr;
+                                Log.d("TmapTest", "*** updatePositionInfo - addr: " + addr);
+                            }
+                        });
+                        //address = tmapdata.convertGpsToAddress(point.getLatitude(), point.getLongitude());
+
+                    } catch (Exception e) {
+                        Log.d("error", "*** Exception: " + e.getLocalizedMessage());
+                        e.printStackTrace();
+                    }
+
+                    //Toast.makeText(getApplicationContext(), "총 거리 : " + newTrail.totalDistance + "km", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "시작주소 : " + address1 , Toast.LENGTH_SHORT).show();
+
+
+                    try {
+                        dbHelper.insert("신규 산책로", newTrail.coorList, newTrail.totalDistance, address1, address2);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //Toast.makeText(getApplicationContext(), "디비저장\n" + dbHelper.getResult() , Toast.LENGTH_LONG).show();
+
+
                     newTrail = null;
                 } else {
-                    Toast.makeText(getApplicationContext(), "문제", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "문제", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -181,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
         //만약 좌표를 기록 중이라면,
 
         if (isRecording) {
-            Toast.makeText(getApplicationContext(), "좌표 기록 중", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "좌표 기록 중", Toast.LENGTH_SHORT).show();
             newTrail.coorList.add(tMapGPS.getLocation());
             drawTrail(newTrail);
         }
@@ -220,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements TMapGpsManager.on
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
         if (isDrawing) {
             newTrail.coorList.add(tMapPoint);
-            Toast.makeText(getApplicationContext(), "터치기록", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "터치기록", Toast.LENGTH_SHORT).show();
 
             TMapCircle tMapCircle = new TMapCircle();
             tMapCircle.setCenterPoint(tMapPoint);

@@ -2,10 +2,13 @@ package com.example.miniproject1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,14 +20,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity {
+    ListView trailListView;
+    DBHelper dbHelper;
+    SQLiteDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        ListViewAdapter adapter = new ListViewAdapter();
-        
+        dbHelper = new DBHelper(this, 1);
+        database = dbHelper.getWritableDatabase();
+        trailListView = (ListView) findViewById(R.id.trailListView);
+
         //돌아가기버튼
         Button returnBtn = (Button) findViewById(R.id.returnButton);
         returnBtn.setOnClickListener(new View.OnClickListener() {
@@ -33,66 +41,38 @@ public class ListActivity extends AppCompatActivity {
                 finish();
             }
         });
+        //Clear버튼
+        Button clearBtn = (Button) findViewById(R.id.clearButton);
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dbHelper.onUpgrade(database,1,1);
+                displayList();
+            }
+        });
+        //trailListView.setAdapter(adapter);
 
-        ListView trailListView = findViewById(R.id.trailListView);
-        trailListView.setAdapter(adapter);
-
+        displayList();
     }
 
-    /* 리스트뷰 어댑터 */
-    public  class ListViewAdapter extends BaseAdapter {
-        ArrayList<Trail> items = new ArrayList<Trail>();
+    public void displayList(){
+        //Dbhelper의 읽기모드 객체를 가져와 SQLiteDatabase에 담아 사용준비
 
-        @Override
-        public int getCount() {
-            return items.size();
+
+        //Cursor라는 그릇에 목록을 담아주기
+        Cursor cursor = database.rawQuery("SELECT * FROM Trails", null);
+
+        ListViewAdapter adapter = new ListViewAdapter();
+
+        //목록의 개수만큼 순회하여 adapter에 있는 list배열에 add
+        while (cursor.moveToNext()) {
+            // 0 : 이름 , 1 : 제이슨리스트 , 2 : 총 길이 , 3 : 주소 , 4 : 주소
+            adapter.addItemToList(cursor.getString(0), cursor.getString(1),cursor.getDouble(2),cursor.getString(3),cursor.getString(4));
         }
 
-        public void addItem(Trail item) {
-            items.add(item);
-        }
+        //리스트뷰의 어댑터 대상을 여태 설계한 adapter로 설정
+        trailListView.setAdapter(adapter);
 
-        @Override
-        public Object getItem(int position) {
-            return items.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup viewGroup) {
-            final Context context = viewGroup.getContext();
-            final Trail trail = items.get(position);
-
-            if(convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.activity_list_item, viewGroup, false);
-
-            } else {
-                View view = new View(context);
-                view = (View) convertView;
-            }
-
-            TextView trailName = (TextView) convertView.findViewById(R.id.trailName);
-            TextView trailInfo = (TextView) convertView.findViewById(R.id.trailInfo);
-
-            trailName.setText(trail.getName());
-            trailInfo.setText(trail.getName());
-            //Log.d(TAG, "getView() - [ "+position+" ] "+bearItem.getName());
-
-            //각 아이템 선택 event
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
-
-            return convertView;  //뷰 객체 반환
-        }
     }
 
 }

@@ -17,11 +17,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="돌아가기" />
+        <Button
+            android:id="@+id/clearButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clear" />
 
         <ListView
             android:id="@+id/trailListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:choiceMode="singleChoice" />
+
 
 
     </LinearLayout>
